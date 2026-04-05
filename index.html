@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KnowYourRights — Legal Assistant</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0d;
+            --surface: #141414;
+            --border: #2a2a2a;
+            --accent: #00e5a0;
+            --accent-dim: #00e5a033;
+            --text: #e8e8e8;
+            --muted: #666;
+            --web-tag: #f59e0b;
+            --arxiv-tag: #60a5fa;
+            --error: #f87171;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 28px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .logo-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        header h1 {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .status-pill {
+            margin-left: auto;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .status-pill.ready {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        #new-chat-btn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            margin-left: 10px;
+        }
+
+        #new-chat-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ── Layout ── */
+        main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        #chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-right: 1px solid var(--border);
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .msg {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            animation: fadeUp 0.25s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .msg.user .msg-label {
+            color: var(--accent);
+        }
+
+        .msg-body {
+            font-size: 14px;
+            line-height: 1.75;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .msg.user .msg-body {
+            color: #fff;
+            font-weight: 400;
+        }
+
+        .cursor::after {
+            content: '▋';
+            color: var(--accent);
+            animation: blink 0.8s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* ── Clarification bubble ── */
+        .clarify-bubble {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeUp 0.25s ease;
+        }
+
+        .clarify-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .clarify-question {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .clarify-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .clarify-btn {
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .clarify-btn:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* Dim all buttons once one is chosen */
+        .clarify-options.answered .clarify-btn {
+            opacity: 0.35;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .clarify-options.answered .clarify-btn.chosen {
+            opacity: 1;
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* ── Input area ── */
+        #input-area {
+            padding: 20px 28px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        #query-input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            padding: 12px 16px;
+            resize: none;
+            outline: none;
+            min-height: 48px;
+            max-height: 140px;
+            transition: border-color 0.2s;
+            line-height: 1.5;
+        }
+
+        #query-input:focus {
+            border-color: var(--accent);
+        }
+
+        #query-input::placeholder {
+            color: var(--muted);
+        }
+
+        #send-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+
+        #send-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        #send-btn:hover:not(:disabled) {
+            opacity: 0.85;
+        }
+
+        /* ── Side panel ── */
+        #side-panel {
+            width: 320px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .panel-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .panel-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .citation-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            animation: fadeUp 0.2s ease;
+        }
+
+        .citation-card:hover {
+            border-color: #444;
+        }
+
+        .citation-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 2px 7px;
+            border-radius: 3px;
+            align-self: flex-start;
+        }
+
+        .tag-arxiv {
+            background: #1d3557;
+            color: var(--arxiv-tag);
+        }
+
+        .tag-web {
+            background: #3b2800;
+            color: var(--web-tag);
+        }
+
+        .citation-title {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--text);
+        }
+
+        .citation-authors {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .citation-url {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--accent);
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .citation-url:hover {
+            text-decoration: underline;
+        }
+
+        .figure-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            animation: fadeUp 0.2s ease;
+        }
+
+        .figure-type {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--accent);
+        }
+
+        .figure-caption {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #bbb;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            padding: 5px 0;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        .stat-key {
+            color: var(--muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+        }
+
+        .stat-val {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .stat-val.warn {
+            color: var(--web-tag);
+        }
+
+        #empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            text-align: center;
+            padding: 40px;
+        }
+
+        #empty-state .big {
+            font-size: 32px;
+        }
+
+        #empty-state p {
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 320px;
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 13px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-dot"></div>
+        <h1>KnowYourRights</h1>
+        <span class="status-pill" id="status-pill">connecting…</span>
+        <button id="new-chat-btn" title="Start a new conversation">+ New Chat</button>
+    </header>
+
+    <main>
+        <section id="chat-panel">
+            <div id="messages">
+                <div id="empty-state">
+                    <div class="big">⚖</div>
+                    <p>Ask any question about your legal rights in India.<br>Powered by the KnowYourRights legal corpus.
+                    </p>
+                </div>
+            </div>
+            <div id="input-area">
+                <textarea id="query-input" placeholder="Ask a legal question…" rows="1"></textarea>
+                <button id="send-btn" title="Send">↑</button>
+            </div>
+        </section>
+
+        <aside id="side-panel">
+            <div class="panel-section" id="citations-section" style="display:none">
+                <div class="panel-title">Citations</div>
+                <div id="citations-list"></div>
+            </div>
+            <div class="panel-section" id="figures-section" style="display:none">
+                <div class="panel-title">Figures</div>
+                <div id="figures-list"></div>
+            </div>
+            <div class="panel-section" id="stats-section" style="display:none">
+                <div class="panel-title">Pipeline Stats</div>
+                <div id="stats-list"></div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        const SERVER = "http://localhost:8000";
+
+        const messagesEl = document.getElementById("messages");
+        const inputEl = document.getElementById("query-input");
+        const sendBtn = document.getElementById("send-btn");
+        const statusPill = document.getElementById("status-pill");
+        const emptyState = document.getElementById("empty-state");
+        const newChatBtn = document.getElementById("new-chat-btn");
+
+        const citationsSection = document.getElementById("citations-section");
+        const citationsList = document.getElementById("citations-list");
+        const figuresSection = document.getElementById("figures-section");
+        const figuresList = document.getElementById("figures-list");
+        const statsSection = document.getElementById("stats-section");
+        const statsList = document.getElementById("stats-list");
+
+        const sessionId = crypto.randomUUID();
+
+        // ── Health check ──
+        (async () => {
+            try {
+                const res = await fetch(`${SERVER}/health`);
+                if (res.ok) { statusPill.textContent = "ready"; statusPill.classList.add("ready"); }
+                else statusPill.textContent = "error";
+            } catch { statusPill.textContent = "offline"; }
+        })();
+
+        // ── New Chat ──
+        newChatBtn.addEventListener("click", async () => {
+            await fetch(`${SERVER}/reset?session_id=${sessionId}`, { method: "POST" });
+            messagesEl.innerHTML = "";
+            messagesEl.appendChild(emptyState);
+            emptyState.style.display = "flex";
+            clearSidePanel();
+        });
+
+        // ── Auto-resize textarea ──
+        inputEl.addEventListener("input", () => {
+            inputEl.style.height = "auto";
+            inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+        });
+
+        inputEl.addEventListener("keydown", e => {
+            if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendQuery(); }
+        });
+        sendBtn.addEventListener("click", sendQuery);
+
+        // ── Helpers ──
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function appendMessage(role, text = "") {
+            emptyState.style.display = "none";
+            const msg = document.createElement("div");
+            msg.className = `msg ${role}`;
+            msg.innerHTML = `
+                <span class="msg-label">${role === "user" ? "You" : "Assistant"}</span>
+                <div class="msg-body${role === "assistant" ? " cursor" : ""}">${escHtml(text)}</div>
+            `;
+            messagesEl.appendChild(msg);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return msg.querySelector(".msg-body");
+        }
+
+        function clearSidePanel() {
+            citationsSection.style.display = "none";
+            figuresSection.style.display = "none";
+            statsSection.style.display = "none";
+            citationsList.innerHTML = "";
+            figuresList.innerHTML = "";
+            statsList.innerHTML = "";
+        }
+
+        // ── Clarification bubble renderer ──
+        // When the server sends `event: clarify`, we render option buttons.
+        // Clicking a button sends just the chosen option as a plain query —
+        // the server's session history + context_resolver handle the rest.
+        function renderClarification(questions) {
+            emptyState.style.display = "none";
+
+            const bubble = document.createElement("div");
+            bubble.className = "clarify-bubble";
+
+            const label = document.createElement("span");
+            label.className = "clarify-label";
+            label.textContent = "Assistant";
+            bubble.appendChild(label);
+
+            questions.forEach(q => {
+                const parts = q.split("|||");
+                const qText = parts[0].trim();
+                const options = parts[1] ? parts[1].split("|").map(o => o.trim()) : [];
+
+                const qEl = document.createElement("div");
+                qEl.className = "clarify-question";
+                qEl.textContent = qText;
+                bubble.appendChild(qEl);
+
+                if (options.length) {
+                    const optsEl = document.createElement("div");
+                    optsEl.className = "clarify-options";
+
+                    options.forEach(opt => {
+                        const btn = document.createElement("button");
+                        btn.className = "clarify-btn";
+                        btn.textContent = opt;
+
+                        btn.addEventListener("click", () => {
+                            // Mark chosen option visually
+                            optsEl.classList.add("answered");
+                            btn.classList.add("chosen");
+
+                            // Send just the chosen option as a plain query.
+                            // The server already saved the clarifying question to
+                            // session history, so context_resolver will see:
+                            //   User:      "what are my rights"
+                            //   Assistant: "What is your situation? [...]"
+                            //   User:      "Police stopped me"   ← this call
+                            // and resolve it into a full self-contained query.
+                            sendQuery(opt);
+                        });
+
+                        optsEl.appendChild(btn);
+                    });
+
+                    bubble.appendChild(optsEl);
+                }
+            });
+
+            messagesEl.appendChild(bubble);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        // ── Side-panel renderers ──
+        function renderCitations(citations) {
+            if (!citations || !citations.length) return;
+            citationsSection.style.display = "flex";
+            citations.forEach(c => {
+                const isWeb = c.type === "web";
+                const card = document.createElement("div");
+                card.className = "citation-card";
+                card.innerHTML = `
+                    <span class="citation-tag ${isWeb ? "tag-web" : "tag-arxiv"}">${isWeb ? "WEB" : "ARXIV"}</span>
+                    <div class="citation-title">${escHtml(c.title || "")}</div>
+                    ${c.authors ? `<div class="citation-authors">${escHtml(c.authors)}</div>` : ""}
+                    ${c.url ? `<a class="citation-url" href="${c.url}" target="_blank">${c.url}</a>` : ""}
+                `;
+                citationsList.appendChild(card);
+            });
+        }
+
+        function renderFigures(image_refs) {
+            if (!image_refs || !image_refs.length) return;
+            figuresSection.style.display = "flex";
+            image_refs.forEach(ref => {
+                const card = document.createElement("div");
+                card.className = "figure-card";
+                card.innerHTML = `
+                    <span class="figure-type">${escHtml(ref.figure_type || "figure")}</span>
+                    <div class="figure-caption">${escHtml(ref.caption || "")}</div>
+                    ${ref.title ? `<div class="citation-authors">${escHtml(ref.title)}</div>` : ""}
+                `;
+                figuresList.appendChild(card);
+            });
+        }
+
+        function renderStats(stats) {
+            if (!stats) return;
+            statsSection.style.display = "flex";
+            const rows = [
+                ["Situation", stats.situation, false],
+                ["Routing", stats.routing_decision, false],
+                ["Retries", stats.retry_count, stats.retry_count > 0],
+                ["Chunks", stats.chunks_passed, false],
+                ["Tavily", stats.tavily_used ? "yes" : "no", stats.tavily_used],
+            ];
+            rows.forEach(([k, v, warn]) => {
+                const row = document.createElement("div");
+                row.className = "stat-row";
+                row.innerHTML = `
+                    <span class="stat-key">${k}</span>
+                    <span class="stat-val ${warn ? "warn" : ""}">${v}</span>
+                `;
+                statsList.appendChild(row);
+            });
+        }
+
+        // ── Main send function ──
+        // overrideQuery is set when a clarification button is clicked.
+        async function sendQuery(overrideQuery) {
+            const query = overrideQuery !== undefined
+                ? overrideQuery
+                : inputEl.value.trim();
+
+            if (!query) return;
+
+            if (overrideQuery === undefined) {
+                inputEl.value = "";
+                inputEl.style.height = "auto";
+            }
+
+            sendBtn.disabled = true;
+            clearSidePanel();
+
+            appendMessage("user", query);
+            const bodyEl = appendMessage("assistant");
+
+            try {
+                const res = await fetch(`${SERVER}/query`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        query,
+                        session_id: sessionId,
+                        // No is_clarification / original_query needed —
+                        // context_resolver reads session history instead.
+                    }),
+                });
+
+                if (!res.ok) {
+                    bodyEl.classList.remove("cursor");
+                    bodyEl.innerHTML = `<span class="error-msg">Server error: ${res.status}</span>`;
+                    return;
+                }
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+                let eventType = "";   // tracks the current SSE event name
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop();   // keep incomplete last line
+
+                    for (const line of lines) {
+                        if (line.startsWith("event:")) {
+                            eventType = line.slice(6).trim();
+                            continue;
+                        }
+
+                        if (line.startsWith("data:")) {
+                            const data = line.slice(5);  // strip "data:"
+
+                            if (eventType === "clarify") {
+                                // ── Clarification request from the pipeline ──
+                                bodyEl.classList.remove("cursor");
+                                bodyEl.closest(".msg").style.display = "none";
+
+                                try {
+                                    const payload = JSON.parse(data);
+                                    renderClarification(payload.clarifying_questions);
+                                } catch (_) { }
+
+                            } else if (eventType === "done") {
+                                // ── Final metadata ──
+                                try {
+                                    const meta = JSON.parse(data);
+                                    renderCitations(meta.citations);
+                                    renderFigures(meta.image_refs);
+                                    renderStats(meta.stats);
+                                } catch (_) { }
+
+                            } else {
+                                // ── Streaming token ──
+                                bodyEl.textContent += data;
+                                messagesEl.scrollTop = messagesEl.scrollHeight;
+                            }
+
+                            // Reset event type after consuming the data line
+                            eventType = "";
+                        }
+                    }
+                }
+
+                bodyEl.classList.remove("cursor");
+
+            } catch (err) {
+                bodyEl.classList.remove("cursor");
+                bodyEl.innerHTML = `<span class="error-msg">Connection error: ${err.message}</span>`;
+            } finally {
+                sendBtn.disabled = false;
+                inputEl.focus();
+            }
+        }
+    </script>
+</body>
+
+</html>
