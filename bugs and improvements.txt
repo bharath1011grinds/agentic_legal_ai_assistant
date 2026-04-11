@@ -1,0 +1,7 @@
+bugs : 
+1. Need to change the hardcoded message for edit_detector -> correction
+2. intake agent might need to be called even after edit_detector.
+3. spans appear as traces in observability cos we are not using the wrappedobserved_ask in server.py - not possible in the current implementation cos of incompatible arguments of observed_ask()... and we would also have duplicate history updates..
+
+
+

@@ -35,7 +35,7 @@ Respond ONLY in this JSON format, no other text:
 {
   "situation": "<one of the 7 values above>",
   "document_filter": ["<doc_type>", ...],
-  "confidence": <float 0-1>,
+  "confidence": <float 0-1>
 }"""
 
 
@@ -73,7 +73,7 @@ def classify_situation_node(state: GraphState) -> dict:
             raw_text = raw_text[4:]
 
     raw_text = raw_text.strip()
- 
+    print(raw_text)
     try:
         parsed = json.loads(raw_text)
         situation = SituationClass(**parsed)
