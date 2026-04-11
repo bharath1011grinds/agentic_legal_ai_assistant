@@ -41,7 +41,7 @@ def _append_turn(history: list[dict], user_query: str, assistant_answer: str) ->
 def observed_resolve_context_node(state):
     
     #doing this cos dict might use call by reference and ip and op might end up having the same value in langfuse, create a copy instead./
-    orig_input = str(state.get("raw_query", orig_input))
+    orig_input = str(state.get("raw_query"))
 
     result = _resolve_context_node(state)
 
@@ -309,6 +309,152 @@ def observed_ask(graph, query: str, conversation_history : list[dict]):
     _print_result(result, query)
  
     return result, updated_history
+
+
+# ── Intake Pipeline Observed Nodes ────────────────────────────────────────────
+
+from agents.intake_agent    import intake_agent_node     as _intake_agent_node
+from agents.intake_agent    import decompose_claims_node as _decompose_claims_node
+from agents.claim_retriever import claim_retrieval_node  as _claim_retrieval_node
+from agents.edit_detector   import detect_edit_node      as _detect_edit_node
+from agents.intake_synthesizer import (
+    intake_synthesize_node as _intake_synthesize_node,
+    stream_intake_answer   as _stream_intake_answer,
+)
+
+
+@observe(name="intake_agent")
+def observed_intake_agent_node(state):
+    result     = _intake_agent_node(state)
+    case_log   = result.get("case_log")
+    turn_count = result.get("intake_turn_count", 0)
+
+    lf.update_current_span(
+        input  = state.get("raw_query", ""),
+        output = result.get("answer", "")[:300],
+        metadata={
+            "turn_count":              turn_count,
+            "intake_ready":            "__INTAKE_READY__" in result.get("clarification_questions", []),
+            "non_negotiables_filled":  case_log.non_negotiables_filled() if case_log else False,
+            "incident_type":           case_log.incident_type            if case_log else None,
+            "relief_sought":           case_log.relief_sought            if case_log else None,
+        }
+    )
+    return result
+
+
+@observe(name="decompose_claims")
+def observed_decompose_claims_node(state):
+    result     = _decompose_claims_node(state)
+    decomposed = result.get("decomposed_claims")
+
+    lf.update_current_span(
+        input  = state.get("case_log").to_context_string() if state.get("case_log") else "",
+        output = f"{len(decomposed.claims)} claims decomposed" if decomposed else "no claims",
+        metadata={
+            "claims_count": len(decomposed.claims) if decomposed else 0,
+            "claims":       [
+                {"id": c.claim_id, "text": c.claim_text[:80], "doc_filter": c.doc_filter}
+                for c in decomposed.claims
+            ] if decomposed else [],
+        }
+    )
+    return result
+
+
+@observe(name="claim_retrieval")
+def observed_claim_retrieval_node(state):
+    result        = _claim_retrieval_node(state)
+    grader_output = result.get("grader_output")
+    claim_results = result.get("claim_results", [])
+
+    # Per-claim pass rates as flat metadata
+    per_claim_stats = {
+        f"claim_{r['claim_id']}_passed": r["passed"]
+        for r in claim_results
+    }
+    per_claim_routing = {
+        f"claim_{r['claim_id']}_routing": r["routing"]
+        for r in claim_results
+    }
+
+    lf.update_current_span(
+        input  = f"{len(state.get('decomposed_claims').claims)} claims" if state.get("decomposed_claims") else "0 claims",
+        output = grader_output.rerouting_decision if grader_output else "unknown",
+        metadata={
+            "routing_decision":  grader_output.rerouting_decision  if grader_output else "N/A",
+            "confidence_reason": grader_output.confidence_reason   if grader_output else "",
+            "total_passed":      len(grader_output.passed_chunks)  if grader_output else 0,
+            "total_graded":      len(grader_output.chunk_grades)   if grader_output else 0,
+            "claims_count":      len(claim_results),
+            **per_claim_stats,
+            **per_claim_routing,
+        }
+    )
+
+    if grader_output and grader_output.chunk_grades:
+        top_score = max(g.relevance_score for g in grader_output.chunk_grades)
+        lf.score_current_span(name="top_chunk_relevance_score", value=top_score)
+
+    return result
+
+
+@observe(name="detect_edit")
+def observed_detect_edit_node(state):
+    result = _detect_edit_node(state)
+
+    lf.update_current_span(
+        input  = state.get("raw_query", ""),
+        output = result.get("answer", "")[:300],
+        metadata={
+            "edit_detected":   result.get("edit_detected", False),
+            "edited_fields":   result.get("edited_fields", []),
+            "awaiting_contradiction_resolution": result.get("awaiting_contradiction_resolution", False),
+        }
+    )
+    return result
+
+
+@observe(name="intake_synthesize")
+def observed_intake_synthesize_node(state):
+    result        = _intake_synthesize_node(state)
+    claim_results = state.get("claim_results") or []
+
+    lf.update_current_span(
+        input  = state.get("case_log").to_context_string() if state.get("case_log") else "",
+        output = result.get("answer", "")[:500],
+        metadata={
+            "answer_length":   len(result.get("answer", "")),
+            "citations_count": len(result.get("citations", [])),
+            "claims_count":    len(claim_results),
+            "used_tavily":     len(state.get("web_results") or []) > 0,
+            "covered_claims":  sum(1 for r in claim_results if r.get("routing") == "proceed"),
+            "missed_claims":   sum(1 for r in claim_results if r.get("routing") == "detect"),
+        }
+    )
+    return result
+
+
+@observe(name="stream_intake_answer")
+def observed_stream_intake_answer(state):
+    gen = _stream_intake_answer(state)
+
+    full_answer_buffer = []
+    try:
+        for chunk in gen:
+            yield chunk
+            full_answer_buffer.append(chunk.replace("data:", "").replace("\n\n", ""))
+    finally:
+        full_text     = "".join(full_answer_buffer)
+        claim_results = state.get("claim_results") or []
+        lf.update_current_span(
+            output=full_text[:500],
+            metadata={
+                "answer_length": len(full_text),
+                "claims_count":  len(claim_results),
+                "used_tavily":   len(state.get("web_results") or []) > 0,
+            }
+        )
 
 
  

@@ -24,16 +24,21 @@ _LANGFUSE_ENABLED = bool(os.environ.get("LANGFUSE_PUBLIC_KEY") and os.environ.ge
 
 if _LANGFUSE_ENABLED:
     print("[Langfuse] Observability enabled — traced nodes active")
+if _LANGFUSE_ENABLED:
     from observability import (
-        observed_retrieve_chunks_node as retrieve_chunks_node,
-        observed_grade_chunks_node    as grade_chunks_node,
-        observed_synthesize_node      as synthesize_node,
-        observed_synthesize_stream_node as stream_answer,
+        observed_retrieve_chunks_node    as retrieve_chunks_node,
+        observed_grade_chunks_node       as grade_chunks_node,
+        observed_synthesize_node         as synthesize_node,
+        observed_synthesize_stream_node  as stream_answer,
+        observed_detect_ambiguity_node   as detect_ambiguity_node,    
+        observed_classify_situation_node as classify_situation_node,    
+        observed_resolve_context_node    as resolve_context_node,     
+        observed_scope_guard_node        as scope_guard_node,           
+        observed_kb_miss_node            as kb_miss_node,               
         observed_ask,
         flush as langfuse_flush,
         shutdown as langfuse_shutdown
     )
-
 else:
     print("[Langfuse] Keys not found — running without observability")
     langfuse_flush = lambda: None   # no-op if Langfuse not configured

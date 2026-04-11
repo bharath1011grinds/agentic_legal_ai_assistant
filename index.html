@@ -6,20 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KnowYourRights — Legal Assistant</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            --bg: #0d0d0d;
-            --surface: #141414;
-            --border: #2a2a2a;
-            --accent: #00e5a0;
-            --accent-dim: #00e5a033;
-            --text: #e8e8e8;
-            --muted: #666;
-            --web-tag: #f59e0b;
-            --arxiv-tag: #60a5fa;
-            --error: #f87171;
+            --parchment: #f5f0e8;
+            --parchment-2: #ede7d9;
+            --parchment-3: #e4dccb;
+            --ink: #1a1410;
+            --ink-mid: #3d3228;
+            --ink-light: #6b5d4f;
+            --navy: #1b2a4a;
+            --navy-light: #243659;
+            --burgundy: #7a1f2e;
+            --burgundy-dim: #7a1f2e22;
+            --gold: #b8962e;
+            --gold-dim: #b8962e22;
+            --border: #c8bca8;
+            --border-light: #ddd4c0;
+            --error: #8b1c1c;
+            --shadow: 0 2px 12px rgba(26, 20, 16, 0.10);
+            --shadow-lg: 0 4px 24px rgba(26, 20, 16, 0.15);
         }
 
         * {
@@ -29,76 +36,146 @@
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--parchment);
+            color: var(--ink);
+            font-family: 'Source Serif 4', Georgia, serif;
             font-weight: 300;
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            /* subtle paper texture */
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
         }
 
-        /* ── Header ── */
+        /* ── Header ─────────────────────────────────────────────────── */
         header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 18px 28px;
-            border-bottom: 1px solid var(--border);
+            gap: 16px;
+            padding: 14px 32px;
+            background: var(--navy);
+            flex-shrink: 0;
+            border-bottom: 3px solid var(--gold);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .seal {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--gold);
             flex-shrink: 0;
         }
 
-        .logo-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
+        header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--parchment);
+            letter-spacing: 0.04em;
         }
 
-        header h1 {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
+        header h1 span {
+            color: var(--gold);
+        }
+
+        .header-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .status-pill {
-            margin-left: auto;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
             padding: 3px 10px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            color: var(--muted);
+            border-radius: 2px;
+            border: 1px solid #ffffff33;
+            color: #ffffff66;
+            letter-spacing: 0.08em;
         }
 
         .status-pill.ready {
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: var(--gold);
+            color: var(--gold);
         }
 
         #new-chat-btn {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
-            padding: 3px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
+            font-family: 'Source Serif 4', serif;
+            font-size: 12px;
+            padding: 5px 14px;
+            border-radius: 2px;
+            border: 1px solid #ffffff33;
             background: transparent;
-            color: var(--muted);
+            color: #ffffffaa;
             cursor: pointer;
-            transition: border-color 0.2s, color 0.2s;
-            margin-left: 10px;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
         }
 
         #new-chat-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            border-color: var(--gold);
+            color: var(--gold);
+            background: var(--gold-dim);
         }
 
-        /* ── Layout ── */
+        /* ── Mode banner ─────────────────────────────────────────────── */
+        #mode-banner {
+            background: var(--parchment-2);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        #mode-banner p {
+            font-size: 12px;
+            color: var(--ink-light);
+            font-style: italic;
+        }
+
+        .mode-btn {
+            font-family: 'Playfair Display', serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 18px;
+            border-radius: 2px;
+            border: 1px solid var(--border);
+            background: var(--parchment);
+            color: var(--ink-mid);
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        .mode-btn.active {
+            background: var(--navy);
+            color: var(--parchment);
+            border-color: var(--navy);
+        }
+
+        .mode-btn:not(.active):hover {
+            border-color: var(--navy);
+            color: var(--navy);
+        }
+
+        .mode-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+        }
+
+        /* ── Layout ──────────────────────────────────────────────────── */
         main {
             flex: 1;
             display: flex;
@@ -116,25 +193,26 @@
         #messages {
             flex: 1;
             overflow-y: auto;
-            padding: 28px;
+            padding: 32px 36px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 28px;
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
         }
 
+        /* ── Messages ────────────────────────────────────────────────── */
         .msg {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            animation: fadeUp 0.25s ease;
+            animation: fadeUp 0.3s ease;
         }
 
         @keyframes fadeUp {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(10px);
             }
 
             to {
@@ -144,34 +222,44 @@
         }
 
         .msg-label {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--muted);
+            color: var(--ink-light);
         }
 
         .msg.user .msg-label {
-            color: var(--accent);
+            color: var(--navy);
         }
 
         .msg-body {
-            font-size: 14px;
-            line-height: 1.75;
-            color: var(--text);
+            font-size: 14.5px;
+            line-height: 1.85;
+            color: var(--ink-mid);
             white-space: pre-wrap;
             word-break: break-word;
+            font-weight: 300;
         }
 
         .msg.user .msg-body {
-            color: #fff;
+            color: var(--ink);
             font-weight: 400;
+            padding: 10px 16px;
+            background: var(--parchment-2);
+            border-left: 3px solid var(--navy);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .msg.assistant .msg-body {
+            border-left: 3px solid var(--gold);
+            padding-left: 16px;
         }
 
         .cursor::after {
-            content: '▋';
-            color: var(--accent);
-            animation: blink 0.8s step-end infinite;
+            content: '|';
+            color: var(--burgundy);
+            animation: blink 0.9s step-end infinite;
         }
 
         @keyframes blink {
@@ -180,26 +268,62 @@
             }
         }
 
-        /* ── Clarification bubble ── */
+        /* ── Empty state ─────────────────────────────────────────────── */
+        #empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--ink-light);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .empty-seal {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        #empty-state h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--navy);
+            opacity: 0.5;
+        }
+
+        #empty-state p {
+            font-size: 13px;
+            line-height: 1.7;
+            max-width: 340px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* ── Clarification bubble ────────────────────────────────────── */
         .clarify-bubble {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            animation: fadeUp 0.25s ease;
+            gap: 12px;
+            animation: fadeUp 0.3s ease;
         }
 
         .clarify-label {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--muted);
+            color: var(--ink-light);
         }
 
         .clarify-question {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text);
+            font-size: 14.5px;
+            line-height: 1.75;
+            color: var(--ink-mid);
+            border-left: 3px solid var(--gold);
+            padding-left: 16px;
         }
 
         .clarify-options {
@@ -207,39 +331,80 @@
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 4px;
+            padding-left: 19px;
         }
 
         .clarify-btn {
-            font-family: 'IBM Plex Sans', sans-serif;
+            font-family: 'Source Serif 4', serif;
             font-size: 13px;
-            padding: 7px 14px;
-            border-radius: 20px;
-            border: 1px solid var(--accent);
-            background: var(--accent-dim);
-            color: var(--accent);
+            padding: 7px 16px;
+            border-radius: 2px;
+            border: 1px solid var(--burgundy);
+            background: var(--burgundy-dim);
+            color: var(--burgundy);
             cursor: pointer;
-            transition: background 0.15s, color 0.15s;
+            transition: all 0.15s;
         }
 
         .clarify-btn:hover {
-            background: var(--accent);
-            color: #000;
+            background: var(--burgundy);
+            color: var(--parchment);
         }
 
-        /* Dim all buttons once one is chosen */
         .clarify-options.answered .clarify-btn {
-            opacity: 0.35;
+            opacity: 0.3;
             cursor: default;
             pointer-events: none;
         }
 
         .clarify-options.answered .clarify-btn.chosen {
             opacity: 1;
-            background: var(--accent);
-            color: #000;
+            background: var(--burgundy);
+            color: var(--parchment);
         }
 
-        /* ── Input area ── */
+        /* ── Intake ready banner ─────────────────────────────────────── */
+        #intake-ready-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: var(--gold-dim);
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        #intake-ready-bar p {
+            font-size: 13px;
+            color: var(--ink-mid);
+            font-style: italic;
+        }
+
+        #get-advice-btn {
+            font-family: 'Playfair Display', serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 22px;
+            border-radius: 2px;
+            border: none;
+            background: var(--navy);
+            color: var(--parchment);
+            cursor: pointer;
+            transition: background 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        #get-advice-btn:hover {
+            background: var(--navy-light);
+        }
+
+        #get-advice-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ── Input area ──────────────────────────────────────────────── */
         #input-area {
             padding: 20px 28px;
             border-top: 1px solid var(--border);
@@ -247,16 +412,18 @@
             gap: 12px;
             align-items: flex-end;
             flex-shrink: 0;
+            background: var(--parchment-2);
         }
 
         #query-input {
             flex: 1;
-            background: var(--surface);
+            background: var(--parchment);
             border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text);
-            font-family: 'IBM Plex Sans', sans-serif;
+            border-radius: 2px;
+            color: var(--ink);
+            font-family: 'Source Serif 4', serif;
             font-size: 14px;
+            font-weight: 300;
             padding: 12px 16px;
             resize: none;
             outline: none;
@@ -267,18 +434,19 @@
         }
 
         #query-input:focus {
-            border-color: var(--accent);
+            border-color: var(--navy);
         }
 
         #query-input::placeholder {
-            color: var(--muted);
+            color: var(--ink-light);
+            font-style: italic;
         }
 
         #send-btn {
-            background: var(--accent);
-            color: #000;
+            background: var(--navy);
+            color: var(--parchment);
             border: none;
-            border-radius: 6px;
+            border-radius: 2px;
             width: 48px;
             height: 48px;
             cursor: pointer;
@@ -287,21 +455,21 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            transition: opacity 0.2s;
+            transition: background 0.2s;
         }
 
         #send-btn:disabled {
-            opacity: 0.35;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
         #send-btn:hover:not(:disabled) {
-            opacity: 0.85;
+            background: var(--navy-light);
         }
 
-        /* ── Side panel ── */
+        /* ── Side panel ──────────────────────────────────────────────── */
         #side-panel {
-            width: 320px;
+            width: 340px;
             flex-shrink: 0;
             overflow-y: auto;
             padding: 24px 20px;
@@ -310,6 +478,7 @@
             gap: 24px;
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
+            background: var(--parchment);
         }
 
         .panel-section {
@@ -319,19 +488,113 @@
         }
 
         .panel-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.12em;
+            font-family: 'Playfair Display', serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            color: var(--muted);
-            padding-bottom: 6px;
-            border-bottom: 1px solid var(--border);
+            color: var(--navy);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        /* ── Case Log panel ──────────────────────────────────────────── */
+        #case-log-section {
+            display: none;
+        }
+
+        .case-log-field {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+            animation: fadeUp 0.3s ease;
+        }
+
+        .case-log-field:last-child {
+            border-bottom: none;
+        }
+
+        .field-key {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink-light);
+        }
+
+        .field-val {
+            font-size: 13px;
+            color: var(--ink-mid);
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .field-val.empty {
+            color: var(--border);
+            font-style: normal;
+            font-size: 12px;
+        }
+
+        .field-val.filled {
+            color: var(--ink);
+            font-style: normal;
+        }
+
+        .case-log-edit-hint {
+            font-size: 11px;
+            color: var(--ink-light);
+            font-style: italic;
+            margin-top: 6px;
+            text-align: center;
+        }
+
+        /* ── Claims section ──────────────────────────────────────────── */
+        #claims-section {
+            display: none;
+        }
+
+        .claim-row {
+            display: flex;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 12px;
+            line-height: 1.5;
+            animation: fadeUp 0.3s ease;
+        }
+
+        .claim-row:last-child {
+            border-bottom: none;
+        }
+
+        .claim-status {
+            flex-shrink: 0;
+            font-size: 14px;
+            margin-top: 1px;
+        }
+
+        .claim-text {
+            color: var(--ink-mid);
+        }
+
+        .claim-area {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--gold);
+            margin-top: 2px;
+        }
+
+        /* ── Citations ───────────────────────────────────────────────── */
+        #citations-section {
+            display: none;
         }
 
         .citation-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            background: var(--parchment-2);
+            border: 1px solid var(--border-light);
+            border-radius: 2px;
             padding: 12px 14px;
             display: flex;
             flex-direction: column;
@@ -339,45 +602,57 @@
             animation: fadeUp 0.2s ease;
         }
 
-        .citation-card:hover {
-            border-color: #444;
-        }
-
         .citation-tag {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 500;
             padding: 2px 7px;
-            border-radius: 3px;
+            border-radius: 2px;
             align-self: flex-start;
         }
 
-        .tag-arxiv {
-            background: #1d3557;
-            color: var(--arxiv-tag);
+        .tag-constitution {
+            background: #1b2a4a22;
+            color: var(--navy);
+            border: 1px solid var(--navy);
+        }
+
+        .tag-ipc {
+            background: #7a1f2e22;
+            color: var(--burgundy);
+            border: 1px solid var(--burgundy);
+        }
+
+        .tag-crpc {
+            background: #b8962e22;
+            color: var(--gold);
+            border: 1px solid var(--gold);
         }
 
         .tag-web {
-            background: #3b2800;
-            color: var(--web-tag);
+            background: #2e5a1f22;
+            color: #2e5a1f;
+            border: 1px solid #2e5a1f;
         }
 
         .citation-title {
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             line-height: 1.4;
-            color: var(--text);
+            color: var(--ink);
+            font-family: 'Playfair Display', serif;
         }
 
-        .citation-authors {
+        .citation-section {
             font-size: 11px;
-            color: var(--muted);
+            color: var(--ink-light);
+            font-style: italic;
         }
 
         .citation-url {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            color: var(--accent);
+            color: var(--navy);
             text-decoration: none;
             white-space: nowrap;
             overflow: hidden;
@@ -388,28 +663,9 @@
             text-decoration: underline;
         }
 
-        .figure-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--accent);
-            border-radius: 6px;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            animation: fadeUp 0.2s ease;
-        }
-
-        .figure-type {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 10px;
-            color: var(--accent);
-        }
-
-        .figure-caption {
-            font-size: 12px;
-            line-height: 1.5;
-            color: #bbb;
+        /* ── Stats ───────────────────────────────────────────────────── */
+        #stats-section {
+            display: none;
         }
 
         .stat-row {
@@ -417,52 +673,38 @@
             justify-content: space-between;
             align-items: center;
             font-size: 12px;
-            padding: 5px 0;
-            border-bottom: 1px solid #1a1a1a;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
         }
 
         .stat-key {
-            color: var(--muted);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 11px;
+            color: var(--ink-light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.05em;
         }
 
         .stat-val {
-            color: var(--text);
-            font-weight: 500;
+            color: var(--ink-mid);
+            font-weight: 400;
         }
 
         .stat-val.warn {
-            color: var(--web-tag);
+            color: var(--burgundy);
         }
 
-        #empty-state {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            color: var(--muted);
-            text-align: center;
-            padding: 40px;
-        }
-
-        #empty-state .big {
-            font-size: 32px;
-        }
-
-        #empty-state p {
-            font-size: 13px;
-            line-height: 1.6;
-            max-width: 320px;
-        }
-
+        /* ── Error ───────────────────────────────────────────────────── */
         .error-msg {
             color: var(--error);
             font-size: 13px;
+            font-style: italic;
         }
 
+        /* ── Scrollbar ───────────────────────────────────────────────── */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -475,44 +717,97 @@
             background: var(--border);
             border-radius: 2px;
         }
+
+        /* ── Turn counter ────────────────────────────────────────────── */
+        #turn-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--ink-light);
+            text-align: right;
+            padding: 0 28px 6px;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- ── Header ──────────────────────────────────────────────────────── -->
     <header>
-        <div class="logo-dot"></div>
-        <h1>KnowYourRights</h1>
-        <span class="status-pill" id="status-pill">connecting…</span>
-        <button id="new-chat-btn" title="Start a new conversation">+ New Chat</button>
+        <div class="seal">⚖</div>
+        <h1>Know<span>Your</span>Rights</h1>
+        <div class="header-right">
+            <span class="status-pill" id="status-pill">connecting…</span>
+            <button id="new-chat-btn">↺ New Session</button>
+        </div>
     </header>
 
+    <!-- ── Mode selector ───────────────────────────────────────────────── -->
+    <div id="mode-banner">
+        <p>Select how you'd like to proceed:</p>
+        <button class="mode-btn active" id="btn-quick" onclick="setMode('quick')">Quick Answer</button>
+        <div class="mode-divider"></div>
+        <button class="mode-btn" id="btn-intake" onclick="setMode('intake')">Case Intake</button>
+    </div>
+
     <main>
+        <!-- ── Chat panel ───────────────────────────────────────────────── -->
         <section id="chat-panel">
             <div id="messages">
                 <div id="empty-state">
-                    <div class="big">⚖</div>
-                    <p>Ask any question about your legal rights in India.<br>Powered by the KnowYourRights legal corpus.
-                    </p>
+                    <div class="empty-seal">⚖</div>
+                    <h2>KnowYourRights</h2>
+                    <p>Your legal guide to the Constitution of India, the IPC, and the CrPC.<br>
+                        Select a mode above to begin.</p>
                 </div>
             </div>
+
+            <!-- Intake ready bar — shown when non-negotiables are filled -->
+            <div id="intake-ready-bar">
+                <p>I have enough information to proceed with your legal query.</p>
+                <button id="get-advice-btn" onclick="getAdvice()">Get Legal Advice →</button>
+            </div>
+
+            <div id="turn-counter"></div>
+
             <div id="input-area">
-                <textarea id="query-input" placeholder="Ask a legal question…" rows="1"></textarea>
+                <textarea id="query-input" placeholder="Type your query…" rows="1"></textarea>
                 <button id="send-btn" title="Send">↑</button>
             </div>
         </section>
 
+        <!-- ── Side panel ───────────────────────────────────────────────── -->
         <aside id="side-panel">
-            <div class="panel-section" id="citations-section" style="display:none">
+
+            <!-- Case log — intake mode -->
+            <div class="panel-section" id="case-log-section">
+                <div class="panel-title">Case Summary</div>
+                <div id="case-log-fields"></div>
+                <p class="case-log-edit-hint">You may correct any detail above by typing in the chat.</p>
+            </div>
+
+            <!-- Claims breakdown — after advice -->
+            <div class="panel-section" id="claims-section">
+                <div class="panel-title">Legal Claims</div>
+                <div id="claims-list"></div>
+            </div>
+
+            <!-- Citations -->
+            <div class="panel-section" id="citations-section">
                 <div class="panel-title">Citations</div>
                 <div id="citations-list"></div>
             </div>
-            <div class="panel-section" id="figures-section" style="display:none">
-                <div class="panel-title">Figures</div>
-                <div id="figures-list"></div>
-            </div>
-            <div class="panel-section" id="stats-section" style="display:none">
-                <div class="panel-title">Pipeline Stats</div>
+
+            <!-- Stats -->
+            <div class="panel-section" id="stats-section">
+                <div class="panel-title">Pipeline</div>
                 <div id="stats-list"></div>
+            </div>
+
+            <!-- Empty side panel hint -->
+            <div id="side-empty"
+                style="color:var(--ink-light);font-size:13px;font-style:italic;margin-top:40px;text-align:center;line-height:1.7;">
+                Citations and pipeline stats will appear here after a response.
             </div>
         </aside>
     </main>
@@ -526,17 +821,26 @@
         const statusPill = document.getElementById("status-pill");
         const emptyState = document.getElementById("empty-state");
         const newChatBtn = document.getElementById("new-chat-btn");
+        const intakeReadyBar = document.getElementById("intake-ready-bar");
+        const getAdviceBtn = document.getElementById("get-advice-btn");
+        const turnCounter = document.getElementById("turn-counter");
 
+        const caseLogSection = document.getElementById("case-log-section");
+        const caseLogFields = document.getElementById("case-log-fields");
+        const claimsSection = document.getElementById("claims-section");
+        const claimsList = document.getElementById("claims-list");
         const citationsSection = document.getElementById("citations-section");
         const citationsList = document.getElementById("citations-list");
-        const figuresSection = document.getElementById("figures-section");
-        const figuresList = document.getElementById("figures-list");
         const statsSection = document.getElementById("stats-section");
         const statsList = document.getElementById("stats-list");
+        const sideEmpty = document.getElementById("side-empty");
 
         const sessionId = crypto.randomUUID();
+        let currentMode = "quick";
+        let intakeReady = false;
+        let adviceGiven = false;
 
-        // ── Health check ──
+        // ── Health check ───────────────────────────────────────────────────
         (async () => {
             try {
                 const res = await fetch(`${SERVER}/health`);
@@ -545,16 +849,46 @@
             } catch { statusPill.textContent = "offline"; }
         })();
 
-        // ── New Chat ──
+        // ── New Chat ────────────────────────────────────────────────────────
         newChatBtn.addEventListener("click", async () => {
             await fetch(`${SERVER}/reset?session_id=${sessionId}`, { method: "POST" });
             messagesEl.innerHTML = "";
             messagesEl.appendChild(emptyState);
             emptyState.style.display = "flex";
             clearSidePanel();
+            intakeReady = false;
+            adviceGiven = false;
+            intakeReadyBar.style.display = "none";
+            turnCounter.style.display = "none";
+            inputEl.placeholder = "Type your query…";
         });
 
-        // ── Auto-resize textarea ──
+        // ── Mode switcher ───────────────────────────────────────────────────
+        async function setMode(mode) {
+            currentMode = mode;
+            document.getElementById("btn-quick").classList.toggle("active", mode === "quick");
+            document.getElementById("btn-intake").classList.toggle("active", mode === "intake");
+
+            await fetch(`${SERVER}/mode`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ session_id: sessionId, mode }),
+            });
+
+            if (mode === "intake") {
+                inputEl.placeholder = "Describe your legal situation…";
+                caseLogSection.style.display = "flex";
+                sideEmpty.style.display = "none";
+                renderCaseLog({});  // show empty log skeleton
+            } else {
+                inputEl.placeholder = "Ask a legal question…";
+                caseLogSection.style.display = "none";
+                intakeReadyBar.style.display = "none";
+                turnCounter.style.display = "none";
+            }
+        }
+
+        // ── Auto-resize textarea ────────────────────────────────────────────
         inputEl.addEventListener("input", () => {
             inputEl.style.height = "auto";
             inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
@@ -563,11 +897,12 @@
         inputEl.addEventListener("keydown", e => {
             if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendQuery(); }
         });
+
         sendBtn.addEventListener("click", sendQuery);
 
-        // ── Helpers ──
+        // ── Helpers ─────────────────────────────────────────────────────────
         function escHtml(str) {
-            return String(str)
+            return String(str ?? "")
                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
@@ -576,9 +911,9 @@
             const msg = document.createElement("div");
             msg.className = `msg ${role}`;
             msg.innerHTML = `
-                <span class="msg-label">${role === "user" ? "You" : "Assistant"}</span>
-                <div class="msg-body${role === "assistant" ? " cursor" : ""}">${escHtml(text)}</div>
-            `;
+            <span class="msg-label">${role === "user" ? "You" : "Assistant"}</span>
+            <div class="msg-body${role === "assistant" ? " cursor" : ""}">${escHtml(text)}</div>
+        `;
             messagesEl.appendChild(msg);
             messagesEl.scrollTop = messagesEl.scrollHeight;
             return msg.querySelector(".msg-body");
@@ -586,20 +921,131 @@
 
         function clearSidePanel() {
             citationsSection.style.display = "none";
-            figuresSection.style.display = "none";
             statsSection.style.display = "none";
+            claimsSection.style.display = "none";
             citationsList.innerHTML = "";
-            figuresList.innerHTML = "";
             statsList.innerHTML = "";
+            claimsList.innerHTML = "";
+            sideEmpty.style.display = currentMode === "intake" ? "none" : "block";
         }
 
-        // ── Clarification bubble renderer ──
-        // When the server sends `event: clarify`, we render option buttons.
-        // Clicking a button sends just the chosen option as a plain query —
-        // the server's session history + context_resolver handle the rest.
+        // ── Case log renderer ───────────────────────────────────────────────
+        const LOG_FIELD_LABELS = {
+            incident_type: "Incident Type",
+            what_happened: "What Happened",
+            "parties.user_role": "Your Role",
+            "parties.opposing_party": "Opposing Party",
+            relief_sought: "Relief Sought",
+            timeline: "Timeline",
+            jurisdiction: "Jurisdiction",
+            evidence_available: "Evidence",
+            prior_legal_action: "Prior Action",
+            specific_sections_mentioned: "Sections Mentioned",
+        };
+
+        function renderCaseLog(log) {
+            caseLogFields.innerHTML = "";
+            const parties = log.parties || {};
+
+            const fields = [
+                ["incident_type", log.incident_type],
+                ["what_happened", log.what_happened],
+                ["parties.user_role", parties.user_role],
+                ["parties.opposing_party", parties.opposing_party],
+                ["relief_sought", log.relief_sought],
+                ["timeline", log.timeline],
+                ["jurisdiction", log.jurisdiction],
+                ["evidence_available", Array.isArray(log.evidence_available) && log.evidence_available.length ? log.evidence_available.join(", ") : null],
+                ["prior_legal_action", log.prior_legal_action],
+                ["specific_sections_mentioned", Array.isArray(log.specific_sections_mentioned) && log.specific_sections_mentioned.length ? log.specific_sections_mentioned.join(", ") : null],
+            ];
+
+            fields.forEach(([key, val]) => {
+                const div = document.createElement("div");
+                div.className = "case-log-field";
+                div.innerHTML = `
+                <span class="field-key">${LOG_FIELD_LABELS[key]}</span>
+                <span class="field-val ${val ? "filled" : "empty"}">${val ? escHtml(val) : "—"}</span>
+            `;
+                caseLogFields.appendChild(div);
+            });
+        }
+
+        // ── Claims renderer ─────────────────────────────────────────────────
+        function renderClaims(claimResults) {
+            if (!claimResults || !claimResults.length) return;
+            claimsSection.style.display = "flex";
+            claimsList.innerHTML = "";
+            claimResults.forEach(r => {
+                const ok = r.routing === "proceed";
+                const row = document.createElement("div");
+                row.className = "claim-row";
+                row.innerHTML = `
+                <span class="claim-status">${ok ? "✓" : "✗"}</span>
+                <div>
+                    <div class="claim-text">${escHtml(r.claim_text)}</div>
+                    <div class="claim-area">${escHtml(r.legal_area)} · ${r.passed}/${r.total} chunks</div>
+                </div>
+            `;
+                claimsList.appendChild(row);
+            });
+        }
+
+        // ── Citation renderer ───────────────────────────────────────────────
+        function renderCitations(citations) {
+            if (!citations || !citations.length) return;
+            citationsSection.style.display = "flex";
+            sideEmpty.style.display = "none";
+            citations.forEach(c => {
+                const dtype = c.document_type || c.type || "";
+                const tag = dtype === "constitution" ? "CONSTITUTION"
+                    : dtype === "ipc" ? "IPC"
+                        : dtype === "crpc" ? "CrPC"
+                            : "WEB";
+                const tagClass = dtype === "constitution" ? "tag-constitution"
+                    : dtype === "ipc" ? "tag-ipc"
+                        : dtype === "crpc" ? "tag-crpc"
+                            : "tag-web";
+                const card = document.createElement("div");
+                card.className = "citation-card";
+                card.innerHTML = `
+                <span class="citation-tag ${tagClass}">${tag}</span>
+                ${c.section_number ? `<div class="citation-section">§ ${escHtml(c.section_number)}</div>` : ""}
+                <div class="citation-title">${escHtml(c.title || "")}</div>
+                ${c.url ? `<a class="citation-url" href="${escHtml(c.url)}" target="_blank">${escHtml(c.url)}</a>` : ""}
+            `;
+                citationsList.appendChild(card);
+            });
+        }
+
+        // ── Stats renderer ──────────────────────────────────────────────────
+        function renderStats(stats) {
+            if (!stats) return;
+            statsSection.style.display = "flex";
+            sideEmpty.style.display = "none";
+            const rows = [
+                ["Query type", stats.query_type, false],
+                ["Routing", stats.routing_decision, false],
+                ["Retries", stats.retry_count, stats.retry_count > 0],
+                ["Chunks", stats.chunks_passed, false],
+                ["Tavily", stats.tavily_used ? "yes" : "no", stats.tavily_used],
+                ["Claims", stats.claims_decomposed, false],
+            ].filter(([, v]) => v !== undefined && v !== null);
+
+            rows.forEach(([k, v, warn]) => {
+                const row = document.createElement("div");
+                row.className = "stat-row";
+                row.innerHTML = `
+                <span class="stat-key">${k}</span>
+                <span class="stat-val ${warn ? "warn" : ""}">${escHtml(String(v))}</span>
+            `;
+                statsList.appendChild(row);
+            });
+        }
+
+        // ── Clarification bubble ────────────────────────────────────────────
         function renderClarification(questions) {
             emptyState.style.display = "none";
-
             const bubble = document.createElement("div");
             bubble.className = "clarify-bubble";
 
@@ -626,22 +1072,11 @@
                         const btn = document.createElement("button");
                         btn.className = "clarify-btn";
                         btn.textContent = opt;
-
                         btn.addEventListener("click", () => {
-                            // Mark chosen option visually
                             optsEl.classList.add("answered");
                             btn.classList.add("chosen");
-
-                            // Send just the chosen option as a plain query.
-                            // The server already saved the clarifying question to
-                            // session history, so context_resolver will see:
-                            //   User:      "what are my rights"
-                            //   Assistant: "What is your situation? [...]"
-                            //   User:      "Police stopped me"   ← this call
-                            // and resolve it into a full self-contained query.
                             sendQuery(opt);
                         });
-
                         optsEl.appendChild(btn);
                     });
 
@@ -653,67 +1088,203 @@
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        // ── Side-panel renderers ──
-        function renderCitations(citations) {
-            if (!citations || !citations.length) return;
-            citationsSection.style.display = "flex";
-            citations.forEach(c => {
-                const isWeb = c.type === "web";
-                const card = document.createElement("div");
-                card.className = "citation-card";
-                card.innerHTML = `
-                    <span class="citation-tag ${isWeb ? "tag-web" : "tag-arxiv"}">${isWeb ? "WEB" : "ARXIV"}</span>
-                    <div class="citation-title">${escHtml(c.title || "")}</div>
-                    ${c.authors ? `<div class="citation-authors">${escHtml(c.authors)}</div>` : ""}
-                    ${c.url ? `<a class="citation-url" href="${c.url}" target="_blank">${c.url}</a>` : ""}
-                `;
-                citationsList.appendChild(card);
-            });
+        // ── SSE stream reader helper ────────────────────────────────────────
+        async function readSSE(res, handlers) {
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+            let eventType = "";
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split("\n");
+                buffer = lines.pop();
+
+                for (const line of lines) {
+                    if (line.startsWith("event:")) {
+                        eventType = line.slice(6).trim();
+                        continue;
+                    }
+                    if (line.startsWith("data:")) {
+                        const data = line.slice(5);
+                        const handler = handlers[eventType] || handlers["token"];
+                        if (handler) handler(data, eventType);
+                        eventType = "";
+                    }
+                }
+            }
         }
 
-        function renderFigures(image_refs) {
-            if (!image_refs || !image_refs.length) return;
-            figuresSection.style.display = "flex";
-            image_refs.forEach(ref => {
-                const card = document.createElement("div");
-                card.className = "figure-card";
-                card.innerHTML = `
-                    <span class="figure-type">${escHtml(ref.figure_type || "figure")}</span>
-                    <div class="figure-caption">${escHtml(ref.caption || "")}</div>
-                    ${ref.title ? `<div class="citation-authors">${escHtml(ref.title)}</div>` : ""}
-                `;
-                figuresList.appendChild(card);
+        // ── Quick mode send ─────────────────────────────────────────────────
+        async function sendQuickQuery(query) {
+            const bodyEl = appendMessage("assistant");
+
+            const res = await fetch(`${SERVER}/query`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query, session_id: sessionId }),
             });
+
+            if (!res.ok) {
+                bodyEl.classList.remove("cursor");
+                bodyEl.innerHTML = `<span class="error-msg">Server error: ${res.status}</span>`;
+                return;
+            }
+
+            await readSSE(res, {
+                clarify: (data) => {
+                    bodyEl.classList.remove("cursor");
+                    bodyEl.closest(".msg").style.display = "none";
+                    try { renderClarification(JSON.parse(data).clarifying_questions); } catch (_) { }
+                },
+                scope_guard: (data) => {
+                    try { bodyEl.textContent = JSON.parse(data).answer; } catch (_) { bodyEl.textContent = data; }
+                    bodyEl.classList.remove("cursor");
+                },
+                kb_miss: (data) => {
+                    bodyEl.textContent = data;
+                    bodyEl.classList.remove("cursor");
+                },
+                done: (data) => {
+                    try {
+                        const meta = JSON.parse(data);
+                        renderCitations(meta.citations);
+                        renderStats(meta.stats);
+                    } catch (_) { }
+                },
+                token: (data) => {
+                    bodyEl.textContent += data;
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                },
+            });
+
+            bodyEl.classList.remove("cursor");
         }
 
-        function renderStats(stats) {
-            if (!stats) return;
-            statsSection.style.display = "flex";
-            const rows = [
-                ["Situation", stats.situation, false],
-                ["Routing", stats.routing_decision, false],
-                ["Retries", stats.retry_count, stats.retry_count > 0],
-                ["Chunks", stats.chunks_passed, false],
-                ["Tavily", stats.tavily_used ? "yes" : "no", stats.tavily_used],
-            ];
-            rows.forEach(([k, v, warn]) => {
-                const row = document.createElement("div");
-                row.className = "stat-row";
-                row.innerHTML = `
-                    <span class="stat-key">${k}</span>
-                    <span class="stat-val ${warn ? "warn" : ""}">${v}</span>
-                `;
-                statsList.appendChild(row);
+        // ── Intake mode send ────────────────────────────────────────────────
+        async function sendIntakeQuery(query) {
+            const bodyEl = appendMessage("assistant");
+
+            // If advice already given, route to /intake/edit
+            const endpoint = adviceGiven ? `${SERVER}/intake/edit` : `${SERVER}/intake/query`;
+
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query, session_id: sessionId }),
             });
+
+            if (!res.ok) {
+                bodyEl.classList.remove("cursor");
+                bodyEl.innerHTML = `<span class="error-msg">Server error: ${res.status}</span>`;
+                return;
+            }
+
+            await readSSE(res, {
+                intake_turn: (data) => {
+                    try {
+                        const payload = JSON.parse(data);
+                        bodyEl.textContent = payload.answer;
+                        bodyEl.classList.remove("cursor");
+
+                        // Update case log side panel
+                        if (payload.case_log) renderCaseLog(payload.case_log);
+
+                        // Update turn counter
+                        turnCounter.style.display = "block";
+                        turnCounter.textContent = `Turn ${payload.turn_count} / 8`;
+
+                        // Show intake ready bar
+                        if (payload.intake_ready && !intakeReady) {
+                            intakeReady = true;
+                            intakeReadyBar.style.display = "flex";
+                        }
+                    } catch (_) { }
+                },
+                edit_confirmed: (data) => {
+                    try {
+                        const payload = JSON.parse(data);
+                        bodyEl.textContent = payload.answer;
+                        bodyEl.classList.remove("cursor");
+                        if (payload.case_log) renderCaseLog(payload.case_log);
+                    } catch (_) { }
+                },
+                kb_miss: (data) => {
+                    bodyEl.textContent = data;
+                    bodyEl.classList.remove("cursor");
+                },
+                done: (data) => {
+                    try {
+                        const meta = JSON.parse(data);
+                        renderClaims(meta.claim_results);
+                        renderCitations(meta.citations);
+                        renderStats(meta.stats);
+                    } catch (_) { }
+                },
+                token: (data) => {
+                    // Re-retrieval streaming after log edit
+                    bodyEl.textContent += data;
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                },
+            });
+
+            bodyEl.classList.remove("cursor");
         }
 
-        // ── Main send function ──
-        // overrideQuery is set when a clarification button is clicked.
+        // ── Get Legal Advice ────────────────────────────────────────────────
+        async function getAdvice() {
+            getAdviceBtn.disabled = true;
+            intakeReadyBar.style.display = "none";
+            adviceGiven = true;
+
+            clearSidePanel();
+            const bodyEl = appendMessage("assistant");
+
+            const res = await fetch(`${SERVER}/intake/advise`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query: "", session_id: sessionId }),
+            });
+
+            if (!res.ok) {
+                bodyEl.classList.remove("cursor");
+                bodyEl.innerHTML = `<span class="error-msg">Server error: ${res.status}</span>`;
+                getAdviceBtn.disabled = false;
+                return;
+            }
+
+            await readSSE(res, {
+                kb_miss: (data) => {
+                    bodyEl.textContent = data;
+                    bodyEl.classList.remove("cursor");
+                },
+                error: (data) => {
+                    try { bodyEl.innerHTML = `<span class="error-msg">${escHtml(JSON.parse(data).error)}</span>`; } catch (_) { }
+                    bodyEl.classList.remove("cursor");
+                },
+                done: (data) => {
+                    try {
+                        const meta = JSON.parse(data);
+                        renderClaims(meta.claim_results);
+                        renderCitations(meta.citations);
+                        renderStats(meta.stats);
+                    } catch (_) { }
+                },
+                token: (data) => {
+                    bodyEl.textContent += data;
+                    messagesEl.scrollTop = messagesEl.scrollHeight;
+                },
+            });
+
+            bodyEl.classList.remove("cursor");
+            getAdviceBtn.disabled = false;
+        }
+
+        // ── Main dispatcher ─────────────────────────────────────────────────
         async function sendQuery(overrideQuery) {
-            const query = overrideQuery !== undefined
-                ? overrideQuery
-                : inputEl.value.trim();
-
+            const query = overrideQuery !== undefined ? overrideQuery : inputEl.value.trim();
             if (!query) return;
 
             if (overrideQuery === undefined) {
@@ -723,86 +1294,16 @@
 
             sendBtn.disabled = true;
             clearSidePanel();
-
             appendMessage("user", query);
-            const bodyEl = appendMessage("assistant");
 
             try {
-                const res = await fetch(`${SERVER}/query`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        query,
-                        session_id: sessionId,
-                        // No is_clarification / original_query needed —
-                        // context_resolver reads session history instead.
-                    }),
-                });
-
-                if (!res.ok) {
-                    bodyEl.classList.remove("cursor");
-                    bodyEl.innerHTML = `<span class="error-msg">Server error: ${res.status}</span>`;
-                    return;
+                if (currentMode === "intake") {
+                    await sendIntakeQuery(query);
+                } else {
+                    await sendQuickQuery(query);
                 }
-
-                const reader = res.body.getReader();
-                const decoder = new TextDecoder();
-                let buffer = "";
-                let eventType = "";   // tracks the current SSE event name
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split("\n");
-                    buffer = lines.pop();   // keep incomplete last line
-
-                    for (const line of lines) {
-                        if (line.startsWith("event:")) {
-                            eventType = line.slice(6).trim();
-                            continue;
-                        }
-
-                        if (line.startsWith("data:")) {
-                            const data = line.slice(5);  // strip "data:"
-
-                            if (eventType === "clarify") {
-                                // ── Clarification request from the pipeline ──
-                                bodyEl.classList.remove("cursor");
-                                bodyEl.closest(".msg").style.display = "none";
-
-                                try {
-                                    const payload = JSON.parse(data);
-                                    renderClarification(payload.clarifying_questions);
-                                } catch (_) { }
-
-                            } else if (eventType === "done") {
-                                // ── Final metadata ──
-                                try {
-                                    const meta = JSON.parse(data);
-                                    renderCitations(meta.citations);
-                                    renderFigures(meta.image_refs);
-                                    renderStats(meta.stats);
-                                } catch (_) { }
-
-                            } else {
-                                // ── Streaming token ──
-                                bodyEl.textContent += data;
-                                messagesEl.scrollTop = messagesEl.scrollHeight;
-                            }
-
-                            // Reset event type after consuming the data line
-                            eventType = "";
-                        }
-                    }
-                }
-
-                bodyEl.classList.remove("cursor");
-
             } catch (err) {
-                bodyEl.classList.remove("cursor");
-                bodyEl.innerHTML = `<span class="error-msg">Connection error: ${err.message}</span>`;
+                console.error(err);
             } finally {
                 sendBtn.disabled = false;
                 inputEl.focus();

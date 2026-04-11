@@ -88,7 +88,7 @@ def resolve_context_node(state: GraphState) -> dict:
         model       = "meta-llama/llama-4-scout-17b-16e-instruct",
         api_key     = os.environ.get("GROQ_API_KEY"),
         temperature = 0.0,
-        max_tokens  = 256,
+        max_tokens  = 1024,
     )
  
     messages = [
