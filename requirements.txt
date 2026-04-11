@@ -1,2 +1,35 @@
+
+# Web framework
+fastapi
+uvicorn[standard]
+aiofiles
+
+# Environment
+python-dotenv
+
+# LangChain / LangGraph
 langgraph
+langchain-core
+langchain-groq
+langchain-community
+
+# LLM / Embeddings
+groq
+
+# Retrieval
+faiss-cpu
+sentence-transformers
+rank_bm25
+tavily-python
+
+# Observability
 langfuse
+
+# Pydantic
+pydantic
+
+# PDF parsing (pdf_parser_phase2.py)
+pymupdf
+
+# Utilities
+numpy
