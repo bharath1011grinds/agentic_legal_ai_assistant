@@ -15,6 +15,11 @@ from intake_graph import build_intake_graph, build_decomposition_graph
 from intake_retrieval_graph import build_intake_retrieval_graph
 from agents.intake_synthesizer import stream_intake_answer
 
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+
 # Import observed stream_answer if Langfuse is enabled
 if _LANGFUSE_ENABLED:
     from observability import (observed_synthesize_stream_node as stream_answer,
@@ -109,6 +114,13 @@ class ModeRequest(BaseModel):
     session_id : str = "default"
     mode : str  #'quick' | 'intake'
 
+
+
+@app.get("/")
+async def serve_ui():
+    return FileResponse("index.html")
+
+
 #Health route to check if the app is alive
 @app.get("/health")
 async def health():
@@ -153,7 +165,7 @@ async def query(payload: QueryRequest, request: Request):
         #Invoking the graph without the synth node.
         #request object contains a pointer to the state variable "state" ...
         final_state = request.app.state.graph.invoke(init_state)
-        
+
         # ── Clarification short-circuit ──────────────────────────────────
         if final_state.get("answer") == "__CLARIFICATION__":
             questions = final_state.get("clarification_questions", [])
